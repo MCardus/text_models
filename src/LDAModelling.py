@@ -62,7 +62,7 @@ class LDAModelling(object):
         return vectorized_documents
 
     @timed
-    def train_gridsearch(self, dataset, num_topics=60, pickle_filename='lda_model.pkl'):
+    def train_gridsearch(self, dataset, num_topics=60, pickle_filename='lda_grid_model.pkl'):
         """
         Train LDA model using grid_search to find best hyperparameters.
         :param dataset: Input dataset. CSV containing fields at least title and content fields
@@ -86,9 +86,8 @@ class LDAModelling(object):
         logging.info(json.dumps({"Service": "train_gridsearch",
                                  "Model Perplexity": best_lda_model.perplexity(document_term_matrix)}))
 
-        pkl_filename = "pickle_model.pkl"
-        with open(pkl_filename, 'wb') as file:
-            pickle.dump(best_lda_model, file)
+        with open(pickle_filename, 'wb') as file:
+            pickle.dump(grid_search, file)
 
     @timed
     def train(self, dataset, num_topics=20, learning_decay=0.7,
@@ -108,8 +107,8 @@ class LDAModelling(object):
         logging.info(json.dumps({"Service": "train",
                                  "Model Perplexity": lda_model.perplexity(document_term_matrix)}))
 
-        pkl_filename = pickle_filename
-        with open(pkl_filename, 'wb') as file:
+      
+        with open(pickle_filename, 'wb') as file:
             pickle.dump(lda_model, file)
     @timed
     def transform(self):
@@ -140,11 +139,12 @@ class LDAModelling(object):
 
 if __name__ == "__main__":
     lda = LDAModelling()
-    #lda.train_gridsearch("../../data/articles1.csv")
+    lda.train_gridsearch("../../data/articles1.csv")
     # lda.train("../../data/articles1.csv")
 
     # Local test execution @TODO write unit test
-    lda.train("articles1_small.csv", total_cpus=2)
+    #lda.train("articles1_small.csv", total_cpus=50)
+    #lda.train_gridsearch("articles1_small.csv")
 
     #with open("lda_model.pkl", "rb") as f:
     #    dictname = pickle.load(f)
