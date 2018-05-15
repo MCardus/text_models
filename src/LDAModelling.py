@@ -15,6 +15,7 @@ import gc
 from functools import wraps
 import logging
 import time
+import pickle
 
 
 class LDAModelling(object):
@@ -61,9 +62,9 @@ class LDAModelling(object):
         return vectorized_documents
 
     @timed
-    def train(self, dataset, num_topics=60):
+    def train_gridsearch(self, dataset, num_topics=60, pickle_filename='lda_model.pkl'):
         """
-        Train LDA model.
+        Train LDA model using grid_search to find best hyperparameters.
         :param dataset: Input dataset. CSV containing fields at least title and content fields
         :param num_topics: Max number of topics
         :return: Void but it serialize the model into a pikle format
@@ -74,19 +75,42 @@ class LDAModelling(object):
                                                                             num_topics,
                                                                             topic_search_granurality)],
                          'learning_decay': [.7]}
-        logging.info(json.dumps({"Service": "train", "Search params": search_params}))
+        logging.info(json.dumps({"Service": "train_gridsearch", "Search params": search_params}))
         lda_model = LatentDirichletAllocation(n_jobs=12)
         grid_search = GridSearchCV(lda_model, param_grid=search_params, n_jobs=5)
         grid_search.fit(document_term_matrix)
         best_lda_model = grid_search.best_estimator_
 
-        logging.info(json.dumps({"Service": "train", "Best Model's Params": grid_search.best_params_}))
-        logging.info(json.dumps({"Service": "train", "Best Log Likelihood Score": grid_search.best_score_}))
-        logging.info(json.dumps({"Service": "train",
+        logging.info(json.dumps({"Service": "train_gridsearch", "Best Model's Params": grid_search.best_params_}))
+        logging.info(json.dumps({"Service": "train_gridsearch", "Best Log Likelihood Score": grid_search.best_score_}))
+        logging.info(json.dumps({"Service": "train_gridsearch",
                                  "Model Perplexity": best_lda_model.perplexity(document_term_matrix)}))
 
-        joblib.dump(best_lda_model, 'output_model.pkl')
+        pkl_filename = "pickle_model.pkl"
+        with open(pkl_filename, 'wb') as file:
+            pickle.dump(best_lda_model, file)
 
+    @timed
+    def train(self, dataset, num_topics=20, learning_decay=0.7,
+              pickle_filename='lda_model.pkl', total_cpus = 60):
+        """
+        Train LDA model.
+        :param dataset: Input dataset. CSV containing fields at least title and content fields
+        """
+        document_term_matrix = self._pre_process(dataset)
+        lda_model = LatentDirichletAllocation(n_jobs=total_cpus,
+                                              learning_decay=learning_decay,
+                                              n_topics=num_topics)
+
+        lda_model.fit(document_term_matrix)
+
+        logging.info(json.dumps({"Service": "train", "Best Log Likelihood Score": lda_model.score(document_term_matrix)}))
+        logging.info(json.dumps({"Service": "train",
+                                 "Model Perplexity": lda_model.perplexity(document_term_matrix)}))
+
+        pkl_filename = pickle_filename
+        with open(pkl_filename, 'wb') as file:
+            pickle.dump(lda_model, file)
     @timed
     def transform(self):
         pass
@@ -116,5 +140,11 @@ class LDAModelling(object):
 
 if __name__ == "__main__":
     lda = LDAModelling()
-    lda.train("../../data/articles1.csv")
+    #lda.train_gridsearch("../../data/articles1.csv")
+    # lda.train("../../data/articles1.csv")
 
+    # Local test execution @TODO write unit test
+    lda.train("articles1_small.csv", total_cpus=2)
+
+    #with open("lda_model.pkl", "rb") as f:
+    #    dictname = pickle.load(f)
