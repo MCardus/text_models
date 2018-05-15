@@ -61,7 +61,7 @@ class LDAModelling(object):
         return vectorized_documents
 
     @timed
-    def train(self, dataset, num_topics=90):
+    def train(self, dataset, num_topics=60):
         """
         Train LDA model.
         :param dataset: Input dataset. CSV containing fields at least title and content fields
@@ -75,8 +75,8 @@ class LDAModelling(object):
                                                                             topic_search_granurality)],
                          'learning_decay': [.7]}
         logging.info(json.dumps({"Service": "train", "Search params": search_params}))
-        lda_model = LatentDirichletAllocation(n_jobs=4)
-        grid_search = GridSearchCV(lda_model, param_grid=search_params, n_jobs=4)
+        lda_model = LatentDirichletAllocation(n_jobs=12)
+        grid_search = GridSearchCV(lda_model, param_grid=search_params, n_jobs=5)
         grid_search.fit(document_term_matrix)
         best_lda_model = grid_search.best_estimator_
 
@@ -116,5 +116,5 @@ class LDAModelling(object):
 
 if __name__ == "__main__":
     lda = LDAModelling()
-    lda.train("articles1_small.csv")
+    lda.train("../../data/articles1.csv")
 
