@@ -50,13 +50,12 @@ class LDA(object):
         return vectorized_documents
 
     @timed
-    def fit(self, texts_list, max_topics=60):
+    def fit(self, texts_list, max_topics=60, topic_search_granurality=10):
         """
         Fit LDA model using gridsearch (hyperparameters optimitzation)
         :param texts_list: Numpy array of texts to be pre-processed
         :param max_topics: Max number of topics
         """
-        topic_search_granurality = 10
         # Pre-processing
         dtm = self.pre_process(texts_list)
         # Fit
