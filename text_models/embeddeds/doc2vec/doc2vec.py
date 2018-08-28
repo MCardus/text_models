@@ -15,7 +15,8 @@ class Doc2Vec(object):
         return [TaggedDocument(words=tokenize(_d.lower()),
                                tags=[str(i)]) for i, _d in enumerate(data_list)]
 
-    def fit(self, data_list, max_epochs=1000, alpha=0.025, min_alpha=0.0000025, min_count=1, dm=1):
+    def fit(self, data_list, max_epochs=50, alpha=0.025, min_alpha=0.0000025, min_count=1, dm=1):
+        logging.info(f"""Doc2Vec fit using max_epochs {max_epochs}""")
         model = Doc2VecGensim(size=300,
                         alpha=alpha,
                         min_alpha=0.00025,
