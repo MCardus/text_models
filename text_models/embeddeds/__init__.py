@@ -1,0 +1,1 @@
+from text_models.embeddeds.doc2vec.doc2vec import Doc2Vec
