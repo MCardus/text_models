@@ -7,6 +7,7 @@ setup(
               'text_models/topic_modelling/lda',
               'text_models/embeddeds',
               'text_models/embeddeds/doc2vec',
+              'text_models/embeddeds/word2vec',
               'text_models/utils'],
     version='0.1',
     license='MIT',

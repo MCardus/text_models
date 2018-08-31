@@ -11,7 +11,7 @@ class Doc2Vec(object):
         self.default_model_pickle_filepath = default_model_pickle_filepath
 
     def pre_process(self, data_list):
-        logging.info(f"""Applying pre_process to {len(data_list)} documents""")
+        logging.info(f"""Applying doc2vec pre_process to {len(data_list)} documents""")
         return [TaggedDocument(words=tokenize(_d.lower()),
                                tags=[str(i)]) for i, _d in enumerate(data_list)]
 
@@ -25,7 +25,7 @@ class Doc2Vec(object):
         tagged_data = self.pre_process(data_list)
         model.build_vocab(tagged_data)
         for epoch in range(max_epochs):
-            logging.info('iteration {0}'.format(epoch))
+            logging.info('iteration {0}/{1}'.format(epoch, max_epochs))
             model.train(tagged_data,
                         total_examples=model.corpus_count,
                         epochs=model.iter)
@@ -40,6 +40,7 @@ class Doc2Vec(object):
 
 
     def predict(self, input_text):
+
         model = Doc2VecGensim.load(self.default_model_pickle_filepath)
         # to find the vector of a document which is not in training data
         test_data = tokenize(input_text)
