@@ -15,7 +15,7 @@ class Doc2Vec(object):
         return [TaggedDocument(words=tokenize(_d.lower()),
                                tags=[str(i)]) for i, _d in enumerate(data_list)]
 
-    def fit(self, data_list, max_epochs=50, alpha=0.025, min_alpha=0.0000025, min_count_freq=0.0001, dm=1, workers=16):
+    def fit(self, data_list, max_epochs=20, alpha=0.025, min_alpha=0.0000025, min_count_freq=0.0001, dm=1, workers=40):
         logging.info(f"""Doc2Vec fit using max_epochs {max_epochs}""")
         min_count = max(1, len(data_list) * min_count_freq)
         logging.info(f"""Selecting min_count {logging}""")

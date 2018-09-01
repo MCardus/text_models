@@ -15,7 +15,7 @@ class Word2vec(object):
         logging.info(f"""Applying word2vc pre_process to {len(data_list)} documents""")
         return [tokenize(doc) for doc in data_list]
 
-    def fit(self, data_list, max_epochs=50, alpha=0.025, min_alpha=0.0000025, min_count=1, dm=1):
+    def fit(self, data_list, max_epochs=20, alpha=0.025, min_alpha=0.0000025, min_count_freq=0.0001, min_count=1, dm=1):
         logging.info(f"""Word2vec fit using max_epochs {max_epochs}""")
         documents = self.pre_process(data_list)
         model = Word2VecGensim(

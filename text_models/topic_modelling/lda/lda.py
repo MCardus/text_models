@@ -10,10 +10,12 @@ from text_models.utils import setup_logging, timed, read_pickle_file, remove_fro
 class LDA(object):
 
     def __init__(self, default_vectorizer_pickle_filepath="vectorizer.pkl",
-                 default_lda_pickle_filepath="lda.pkl"):
+                 default_lda_pickle_filepath="lda.pkl",
+                 num_gridsearch_jobs=3,
+                 lda_workers=13):
         setup_logging(default_path="utils/logging_properties.yml", severity_level=logging.INFO)
-        self.NUM_CONCURRENT_GRIDSEARCH_JOBS = 5
-        self.NUM_CONCURRENT_LDA_JOBS = 12
+        self.num_gridsearch_jobs = num_gridsearch_jobs
+        self.lda_workers = lda_workers
         self.default_vectorizer_pickle_filepath = default_vectorizer_pickle_filepath
         self.default_lda_pickle_filepath = default_lda_pickle_filepath
 
@@ -66,8 +68,8 @@ class LDA(object):
             'learning_decay': [.7]
         }
         logging.info(f"""Gridsearch params {gridsearch_params}""")
-        lda_model = LatentDirichletAllocation(n_jobs=self.NUM_CONCURRENT_LDA_JOBS)
-        grid_search = GridSearchCV(lda_model, param_grid=gridsearch_params, n_jobs=self.NUM_CONCURRENT_GRIDSEARCH_JOBS)
+        lda_model = LatentDirichletAllocation(n_jobs=self.lda_workers)
+        grid_search = GridSearchCV(lda_model, param_grid=gridsearch_params, n_jobs=self.num_gridsearch_jobs)
         logging.info("Training LDA")
         grid_search.fit(dtm)
         best_lda_model = grid_search.best_estimator_
