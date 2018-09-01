@@ -33,7 +33,8 @@ class Word2vec(object):
 
     def predict(self, input_text):
         model = Word2VecGensim.load(self.default_model_pickle_filepath)
-        doc_vector = np.array([model[token]for token in tokenize(input_text)])
+
+        doc_vector = np.array([model[token] for token in tokenize(input_text) if token in model])
         logging.info(f"""word2vec vector: {doc_vector}""")
         return doc_vector
 
