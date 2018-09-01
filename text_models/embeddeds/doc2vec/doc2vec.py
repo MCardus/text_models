@@ -6,9 +6,9 @@ from text_models.utils import setup_logging, tokenize
 
 class Doc2Vec(object):
 
-    def __init__(self, default_model_pickle_filepath="d2v.model"):
+    def __init__(self, default_doc2vec_pickle_filepath="d2v.model"):
         setup_logging(default_path="utils/logging_properties.yml", severity_level=logging.INFO)
-        self.default_model_pickle_filepath = default_model_pickle_filepath
+        self.default_doc2vec_pickle_filepath = default_doc2vec_pickle_filepath
 
     def pre_process(self, data_list):
         logging.info(f"""Applying doc2vec pre_process to {len(data_list)} documents""")
@@ -34,14 +34,14 @@ class Doc2Vec(object):
             # fix the learning rate, no decay
             model.min_alpha = model.alpha
 
-        model.save(self.default_model_pickle_filepath)
+        model.save(self.default_doc2vec_pickle_filepath)
         logging.info("Model Saved")
 
 
 
     def predict(self, input_text):
 
-        model = Doc2VecGensim.load(self.default_model_pickle_filepath)
+        model = Doc2VecGensim.load(self.default_doc2vec_pickle_filepath)
         # to find the vector of a document which is not in training data
         test_data = tokenize(input_text)
         v1 = model.infer_vector(test_data)

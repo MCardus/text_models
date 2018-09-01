@@ -18,7 +18,7 @@ class LDA(object):
         self.default_lda_pickle_filepath = default_lda_pickle_filepath
 
     @timed
-    def pre_process(self, texts_list, vectorizer_file=None, min_freq=0.1, max_freq=0.8,):
+    def pre_process(self, texts_list, vectorizer_file=None, min_freq=0.1, max_freq=0.8):
         """
         Pre-process raw data and generates a convenient structure to fit model's darta
         :param texts_list: Numpy array of texts to be pre-processed

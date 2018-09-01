@@ -23,8 +23,8 @@ class TestLDA(unittest.TestCase):
     def test_fit(self):
         input_text = ["Hello my dear world", "I like sushi from World Japan"]
         output = self.doc2vec.fit(data_list=input_text)
-        assert os.path.isfile(self.doc2vec.default_model_pickle_filepath) and \
-               os.access(self.doc2vec.default_model_pickle_filepath, os.R_OK)
+        assert os.path.isfile(self.doc2vec.default_doc2vec_pickle_filepath) and \
+               os.access(self.doc2vec.default_doc2vec_pickle_filepath, os.R_OK)
 
     def test_predict(self):
         input_text= "Dear world, I like sushi"
